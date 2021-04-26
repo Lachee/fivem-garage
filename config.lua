@@ -1,6 +1,7 @@
 Config = {}
 
 Config.RangeCheck = 25.0 
+Config.RecoveryCost = 250
 
 Config.Garages = {
 

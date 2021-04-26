@@ -60,6 +60,8 @@ SpawnVehicle = function(data, isRecovery)
             if Config.Trim(GetVehicleNumberPlateText(vehicle)) == Config.Trim(vehicleProps["plate"]) then
                 esx.ShowNotification('Your vehicle is already in the streets.', false, false, 13)
                 return HandleCamera(cachedData["currentGarage"])
+                
+                -- TODO: Remove this check if you want to delete existing cars.e
             end
         end
     end

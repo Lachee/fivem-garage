@@ -1,7 +1,7 @@
 esx = nil
 
 local cachedData = {}
-local recoveryCost = 200;
+local recoveryCost = Config.RecoveryCost;
 
 TriggerEvent("esx:getSharedObject", function(library) 
 	esx = library 

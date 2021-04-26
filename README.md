@@ -5,7 +5,7 @@ Customised version of a Garage Script for SkullFace's server.
 
 From your resouces directory for the ESX server:
 ```
-cd [esx]
+cd "[esx]"
 rm -rF esx_garage
 git cloen https://github.com/Lachee/fivem-garage.git esx_garage
 ```

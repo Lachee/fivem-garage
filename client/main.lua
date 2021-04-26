@@ -83,11 +83,7 @@ Citizen.CreateThread(function()
 								if IsControlJustPressed(0, 38) and Menu.hidden then
 									cachedData["currentGarage"] = garage
 									esx.TriggerServerCallback("erp_garage:fetchVehicles", function(fetchedVehicles)
-										AddVehicles(fetchedVehicles[1])
-										if fetchedVehicles[2] then
-											print(fetchedVehicles)
-											EnvioVehFuera(fetchedVehicles[2])
-										end
+										AddVehicles(fetchedVehicles)
 									end,garage)
 									Menu.hidden = not Menu.hidden
 									MenuGarage(action)

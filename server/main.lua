@@ -13,7 +13,7 @@ esx.RegisterServerCallback("erp_garage:fetchVehicles", function(source, callback
 	if player then
 		local sqlQuery = [[
 			SELECT
-				plate, vehicle
+				plate, vehicle, garage, state
 			FROM
 				owned_vehicles
 			WHERE

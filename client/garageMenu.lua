@@ -1,14 +1,14 @@
 local ultimaAccion = nil
 local currentGarage = nil
 local fetchedVehicles = {}
-local fueravehicles = {}
+local recoveryVehicles = {}
 
 -- Opens the garage menu
 function MenuGarage(action)
     if not action then action = ultimaAccion; elseif not action and not ultimaAccion then action = "menu"; end
     ped = GetPlayerPed(-1);
     MenuTitle = "Garage"
-    ClearMenu()
+    OpenMenu()
     ultimaAccion = action
     Citizen.Wait(150)
     DeleteActualVeh()
@@ -21,16 +21,33 @@ function MenuGarage(action)
     end
 end
 
--- Adds a table of vehicles to the fetchedVehicle list
+-- Adds a table of vehicles to the menu.
+-- It will sort recovery vehicles out.
 function AddVehicles(vehicles)
-    local slots = {}
-    for c,v in pairs(vehicles) do
-        table.insert(slots,{["garage"] = v.garage, ["vehiculo"] = json.decode(v.vehicle)})
+    local garage = {}
+    local recovs = {}
+    for c, v in pairs(vehicles) do
+        print("Checking Vehicle:")
+        print(" - C:        " .. c)
+        print(" - Vehicle:  " .. v.vehicle)
+        print(" - Garage:   " .. v.garage)
+        print(" - State:    " .. v.state) 
+        
+        if v.state == 1 and v.garage ~= nil and v.garage ~= "OUT" then
+            --The vehicle is in a valid recovery state, so show in the garage menu
+            table.insert(garage, {["garage"] = v.garage, ["vehiculo"] = json.decode(v.vehicle), ["state"] = v.state, ["plate"] = v.plate})
+        else
+            --The vehicle is not in a valid recovery state, so show in the recovery
+            print(" - Impounded")
+            table.insert(recovs, {["garage"] = "OUT", ["vehiculo"] = json.decode(v.vehicle), ["state"] = v.state, ["plate"] = v.plate})
+        end
     end
-    fetchedVehicles = slots
+    fetchedVehicles = garage
+    recoveryVehicles = recovs
 end
 
--- Does Something Else?
+-- Adds a list of vehicles to the impound list
+-- @deprecated
 function EnvioVehFuera(data)
     local slots = {}
     for c,v in pairs(data) do
@@ -39,21 +56,26 @@ function EnvioVehFuera(data)
             table.insert(slots,{["vehiculo"] = json.decode(v.vehicle),["state"] = v.state})
         end
     end
-    fueravehicles = slots
+    recoveryVehicles = slots
 end
 
 
-
-function pagorecupero(data)
+-- Attempts to recover the vehicle
+function RecoverVehicle(vehicle)
+    print('Attempted Recovery: ' .. vehicle.plate)
     esx.TriggerServerCallback('erp_garage:checkMoney', function(hasEnoughMoney)
         if hasEnoughMoney == true then
-            SpawnVehicle({data,nil},true)
+            print('Recovery: Enough Money');
+            SpawnVehicle({vehicle, nil}, true)
+            TriggerEvent('notification', 'Vehicle recovered', 2)
         elseif hasEnoughMoney == "deudas" then
+            print('Recovery: In Debt');
             MenuRecoveryList()
             TriggerEvent('notification', 'You owe the government more than $ 2000, you can\'t get your car back until you pay your fines!', 2)
         else
+            print('Recovery: Not Enough Money');
             MenuRecoveryList()
-            TriggerEvent('notification', 'There\'s no money on it', 2)							
+            TriggerEvent('notification', 'There\'s no money on it', 2)
         end
     end)
 end
@@ -89,10 +111,30 @@ function MenuRecoveryList()
    MenuTitle = "Recover :"
    ClearMenu()
    Menu.addButton("Turn back","MenuGarage",nil)
-    for c,v in pairs(fueravehicles) do
+    for c,v in pairs(recoveryVehicles) do
         local vehicle = v.vehiculo
+
+        -- Get the text version of the state.
+        -- This is a guess
+        local state = "STOLEN"
+        if v.state == 0 then
+            state = "MISSING"
+        elseif v.state == 1 then 
+            state = "STORED"
+        elseif v.state == 2 then
+            state = "IMPOUNDED"
+        end
+
         if v.state == 0 or v.state == false then
-            Menu.addButton("SAVE | "..GetDisplayNameFromVehicleModel(vehicle.model), "pagorecupero", vehicle, "CEKILMIS", " Motor : " .. round(vehicle.engineHealth) /10 .. "%", " Fuel : " .. round(vehicle.fuelLevel) .. "%","SpawnLocalVehicle")
+            Menu.addButton(
+                "" ..(vehicle.plate).." | "..GetDisplayNameFromVehicleModel(vehicle.model), -- Button Name
+                "RecoverVehicle", 
+                vehicle, 
+                state, 
+                " Motor : " .. round(vehicle.engineHealth) /10 .. "%", 
+                " Fuel : " .. round(vehicle.fuelLevel) .. "%",
+                "SpawnLocalVehicle"
+            )
         end
     end 
 end
@@ -114,7 +156,15 @@ function MenuVehicleList()
     for c,v in pairs(fetchedVehicles) do
         if v then
             local vehicle = v.vehiculo
-            Menu.addButton("" ..(vehicle.plate).." | "..GetDisplayNameFromVehicleModel(vehicle.model), "OptionVehicle", {vehicle,nil}, "garage: "..currentGarage.."", " Motor : " .. round(vehicle.engineHealth) /10 .. "%", " Fuel : " .. round(vehicle.fuelLevel) .. "%","SpawnLocalVehicle")
+            Menu.addButton(
+                "" ..(vehicle.plate).." | "..GetDisplayNameFromVehicleModel(vehicle.model), -- Button Name
+                "OptionVehicle",                                                            -- Button Callback
+                {vehicle,nil},                                                              -- Callback Options
+                "garage: "..currentGarage.."",                                              -- Additional data
+                " Motor : " .. round(vehicle.engineHealth) /10 .. "%", 
+                " Fuel : " .. round(vehicle.fuelLevel) .. "%",
+                "SpawnLocalVehicle"                                                         -- Hover Callback
+            )
         end
     end
 end

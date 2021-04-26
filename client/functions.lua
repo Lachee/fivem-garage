@@ -21,7 +21,6 @@ SpawnLocalVehicle = function(data)
 	
 	if not esx.Game.IsSpawnPointClear(spawnpoint["position"], 3.0) then 
 		TriggerEvent('notification', 'Please move the vehicle off the road', 1)
-
 		return
 	end
 	
@@ -31,14 +30,12 @@ SpawnLocalVehicle = function(data)
 
 	esx.Game.SpawnLocalVehicle(vehicleProps["model"], spawnpoint["position"], spawnpoint["heading"], function(yourVehicle)
 		cachedData["vehicle"] = yourVehicle
-
 		SetVehicleProperties(yourVehicle, vehicleProps)
-
 		SetModelAsNoLongerNeeded(vehicleProps["model"])
 	end)
 end
 
-SpawnVehicle = function(data,recuperar)
+SpawnVehicle = function(data, recuperar)
     local vehicleProps = data[1]
 	local spawnpoint = Config.Garages[cachedData["currentGarage"]]["positions"]["vehicle"]
 

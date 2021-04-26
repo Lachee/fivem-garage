@@ -95,6 +95,11 @@ end
 
 function Menu.renderGUI()
 	if not Menu.hidden then
+		
+		-- Disable ability to enter the vehicle every render frame
+		DisableControlAction(0, 23, true)
+
+		-- Render hte buttons
 		Menu.renderButtons()
 		Menu.updateSelection()
 	end
@@ -189,11 +194,17 @@ end
 
 --------------------------------------------------------------------------------------------------------------------
 
+
 function ClearMenu()
 	--Menu = {}
 	Menu.GUI = {}
 	Menu.buttonCount = 0
 	Menu.selection = 0
+end
+
+
+function OpenMenu() 
+	ClearMenu()	
 end
 
 function MenuCallFunction(fnc, arg)

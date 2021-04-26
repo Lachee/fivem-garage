@@ -1,8 +1,8 @@
 Config = {}
 
-Config.RangeCheck = 25.0 
-Config.RecoveryCost = 250
-
+Config.RangeCheck = 25.0        
+Config.RecoveryCost = 250   -- The cost of a car recovery.
+Config.AllowTows = true     -- Allows the car to be teleported to the garage (at a cost) if it has no people inside
 Config.Garages = {
 
 

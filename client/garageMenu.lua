@@ -73,12 +73,12 @@ function RecoverVehicle(vehicle)
             --  We own the governmnet money
             print('Recovery: In Debt');
             MenuRecoveryList()
-            esx.ShowNotification('You owe the government more than ~r~$'.. tostring(cost) ..'~s~, you can\'t get your car back until you pay your fines!')
+            esx.ShowNotification('You owe the government more than ~r~'.. tomoney(cost) ..'~s~, you can\'t get your car back until you pay your fines!')
         else
             -- We dont have enough money
-            print('Not enough money. Recovery costs $' .. tostring(result));
+            print('Not enough money. Recovery costs ' .. tomoney(result));
             MenuRecoveryList()
-            esx.ShowNotification('Not enough money. Recovery costs ~r~$' .. tostring(cost), false, false, 130)
+            esx.ShowNotification('Not enough money. Recovery costs ~r~' .. tomoney(cost), false, false, 130)
         end
     end)
 end

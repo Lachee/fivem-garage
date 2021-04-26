@@ -58,10 +58,34 @@ SpawnVehicle = function(data, isRecovery)
     
         if DoesEntityExist(vehicle) then
             if Config.Trim(GetVehicleNumberPlateText(vehicle)) == Config.Trim(vehicleProps["plate"]) then
-                esx.ShowNotification('Your vehicle is already in the streets.', false, false, 13)
-                return HandleCamera(cachedData["currentGarage"])
-                
-                -- TODO: Remove this check if you want to delete existing cars.e
+                if esx.Game.IsVehicleEmpty(vehicle) then
+                    if Config.AllowTows then
+                        
+                        -- Pay for the tow
+                        esx.TriggerServerCallback("skull_garage:pay", function(success, amount) 
+                            if success then
+                                -- Teleport the vehicle here
+                                esx.Game.Teleport(vehicle, spawnpoint["position"], function()
+                                    esx.ShowNotification('Your vehicle has been towed here for ~r~' .. tomoney(amount), false, false, 13)
+                                    CloseMenu()
+                                end)
+                            else
+                                esx.ShowNotification('Cannot recover your vehicle. Requires a payment of ~r~' .. tomoney(amount), false, false, 130)
+                            end
+                        end)
+                      
+                        -- Return early
+                        return HandleCamera(cachedData["currentGarage"])
+                    else
+                        -- The vehicle is on the street but we dont allow tows
+                        esx.ShowNotification('Your vehicle is already in the streets.', false, false, 13)
+                        return HandleCamera(cachedData["currentGarage"])
+                    end
+                else
+                    -- Someone is currently in the vehicle
+                    esx.ShowNotification('Sorry, but your vehicle has currently been ~r~stolen~s~!.', false, true, 13)
+                    return HandleCamera(cachedData["currentGarage"])
+                end    
             end
         end
     end
@@ -96,12 +120,12 @@ SpawnVehicle = function(data, isRecovery)
             end)
 
             if isRecovery then
-                esx.ShowNotification('You have ~g~recovered~s~ your vehicle for ~r~$' .. tostring(amount), false, true)
+                esx.ShowNotification('You have ~g~recovered~s~ your vehicle for ~r~' .. tomoney(amount), false, true)
             else
                 esx.ShowNotification('Your vehicle is ready', false, true)
             end
         else
-            esx.ShowNotification('Cannot recover your vehicle. Requires a payment of ~r~$' .. tostring(amount), false, false, 130)
+            esx.ShowNotification('Cannot recover your vehicle. Requires a payment of ~r~' .. tomoney(amount), false, false, 130)
         end
 
     end
@@ -367,4 +391,9 @@ WaitForModel = function(model)
 
 		DrawScreenText("Looking for you " .. GetDisplayNameFromVehicleModel(model) .. "...", 255, 255, 255, 150)
 	end
+end
+
+--Converts the value to money
+function tomoney(value) 
+    return '$' .. tostring(esx.Math.GroupDigits(value))
 end

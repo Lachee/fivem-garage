@@ -78,20 +78,20 @@ esx.RegisterServerCallback("erp_garage:validateVehicle", function(source, callba
 end)
 -- Used to precheck if they can pay.
 esx.RegisterServerCallback('skull_garage:checkPurchase', function(source, cb)
-	print('Been told to check money');
 	local xPlayer = esx.GetPlayerFromId(source)
 	local deudas = 0
 	
-	-- local result = MySQL.Sync.fetchAll('SELECT * FROM billing WHERE identifier = @identifier',{['@identifier'] = xPlayer.identifier})
+	-- Debots not workign for some reason
+	-- local result = MySQL.Sync.fetchAll('SELECT amount FROM billing WHERE identifier = @identifier',{['@identifier'] = xPlayer.identifier})
 	-- if #results > 0 then
-	-- 	print("User has debt to pay")
-	-- 	for i=1, #result, 1 do
-	-- 		amount     = result[i].amount
-	-- 		deudas = deudas + amount
+	--  	print("User has debt to pay")
+	--  	for i=1, #result, 1 do
+	-- 		deudas = deudas + result[i].amount
 	-- 		if deudas >= 2000 then
+	-- 				print('user in governmental debt. Cannot tow!')
 	-- 			cb("in-debt", deudas)
 	-- 		end
-	-- 	end
+	--  	end
 	-- end
 	
 	local money = xPlayer.getMoney()

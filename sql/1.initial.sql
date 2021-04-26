@@ -24,11 +24,11 @@ CREATE TABLE IF NOT EXISTS `owned_vehicles` (
   `job` varchar(20) COLLATE utf8mb4_bin DEFAULT NULL,
   `stored` tinyint(1) NOT NULL DEFAULT 0,
   `lasthouse` int(11) DEFAULT 0,
-  `garage` varchar(200) COLLATE utf8mb4_bin DEFAULT 'A',
   `vehicleimage` longtext COLLATE utf8mb4_bin DEFAULT NULL,
   `finance` int(32) NOT NULL DEFAULT 0,
   `financetimer` int(32) NOT NULL DEFAULT 0,
   `jamstate` int(11) NOT NULL DEFAULT 0,
-  `state` int(11) DEFAULT NULL,
+  -- `garage` varchar(200) COLLATE utf8mb4_bin DEFAULT 'A',
+  -- `state` int(11) DEFAULT NULL,
   PRIMARY KEY (`plate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;

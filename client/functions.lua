@@ -20,7 +20,8 @@ SpawnLocalVehicle = function(data)
 	end
 	
 	if not esx.Game.IsSpawnPointClear(spawnpoint["position"], 3.0) then 
-		TriggerEvent('notification', 'Please move the vehicle off the road', 1)
+		--TriggerEvent('notification', 'Please move the vehicle off the road', 1)
+        esx.ShowNotification('~r~There is a vehicle occupying the space. Please remove it.', false, false, 13)
 		return
 	end
 	
@@ -35,69 +36,81 @@ SpawnLocalVehicle = function(data)
 	end)
 end
 
-SpawnVehicle = function(data, recuperar)
+SpawnVehicle = function(data, isRecovery)
     local vehicleProps = data[1]
 	local spawnpoint = Config.Garages[cachedData["currentGarage"]]["positions"]["vehicle"]
 
-	WaitForModel(vehicleProps["model"])
-
-	if DoesEntityExist(cachedData["vehicle"]) then
-		DeleteEntity(cachedData["vehicle"])
-	end
-	
-	if not esx.Game.IsSpawnPointClear(spawnpoint["position"], 3.0) then 
-		TriggerEvent('notification', 'Please move the vehicle off the road', 2)
-
-		return
-	end
-	CloseMenu()
-	local gameVehicles = esx.Game.GetVehicles()
-
-	for i = 1, #gameVehicles do
-		local vehicle = gameVehicles[i]
-
-        if DoesEntityExist(vehicle) then
-			if Config.Trim(GetVehicleNumberPlateText(vehicle)) == Config.Trim(vehicleProps["plate"]) then
-                TriggerEvent('notification', 'Your vehicle is already in the city streets', 2)
-
-				return HandleCamera(cachedData["currentGarage"])
-			end
-		end
-	end
-
-	esx.Game.SpawnVehicle(vehicleProps["model"], spawnpoint["position"], spawnpoint["heading"], function(yourVehicle)
-		SetVehicleProperties(yourVehicle, vehicleProps)
-
-        
-
-		SetModelAsNoLongerNeeded(vehicleProps["model"])
-
-		TaskWarpPedIntoVehicle(PlayerPedId(), yourVehicle, -1)
-		
-		SetEntityAsMissionEntity(yourVehicle)
-		local gps = AddBlipForEntity(yourVehicle)
-		SetBlipSprite(gps, 225)
-		SetBlipColour(gps, 4)
-		BeginTextCommandSetBlipName("STRING")
-		AddTextComponentString('Vehicle GPS')
-		EndTextCommandSetBlipName(gps)
-
-        SetEntityAsMissionEntity(yourVehicle, true, true)
-        
-        local plate = GetVehicleNumberPlateText(yourVehicle)
-        TriggerServerEvent('garage:addKeys', plate)
-        Citizen.Wait(100)
-        TriggerServerEvent('erp_garage:modifystate', vehicleProps, 0, nil)
-        HandleCamera(cachedData["currentGarage"])
-    end)
-    if recuperar then
-        TriggerEvent('notification', 'You paid $200 to recover your vehicle!', 1)
-        TriggerServerEvent('erp_garage:pay')
+    -- Ensure we are allowed to spawn a vehicle here
+    WaitForModel(vehicleProps["model"])
+    if DoesEntityExist(cachedData["vehicle"]) then
+        DeleteEntity(cachedData["vehicle"])
     end
-    ClearMenu()
+    
+    if not esx.Game.IsSpawnPointClear(spawnpoint["position"], 3.0) then 
+        esx.ShowNotification('~r~There is a vehicle occupying the space. Please remove it.', false, false, 13)
+        return
+    end
+
+    -- Make sure the vehicle doesn't already exist
+    local gameVehicles = esx.Game.GetVehicles()
+    for i = 1, #gameVehicles do
+        local vehicle = gameVehicles[i]
+    
+        if DoesEntityExist(vehicle) then
+            if Config.Trim(GetVehicleNumberPlateText(vehicle)) == Config.Trim(vehicleProps["plate"]) then
+                esx.ShowNotification('Your vehicle is already in the streets.', false, false, 13)
+                return HandleCamera(cachedData["currentGarage"])
+            end
+        end
+    end
+
+    -- Close the menu
+    CloseMenu()
+
+    -- This callback will actually spawn the vehicle if we are allowed, otherwise will give us a notif
+    local callback = function(success, amount) 
+        if success then
+            esx.Game.SpawnVehicle(vehicleProps["model"], spawnpoint["position"], spawnpoint["heading"], function(yourVehicle)
+                SetVehicleProperties(yourVehicle, vehicleProps)
+                SetModelAsNoLongerNeeded(vehicleProps["model"])
+
+                TaskWarpPedIntoVehicle(PlayerPedId(), yourVehicle, -1)
+                
+                SetEntityAsMissionEntity(yourVehicle)
+                local gps = AddBlipForEntity(yourVehicle)
+                SetBlipSprite(gps, 225)
+                SetBlipColour(gps, 4)
+                BeginTextCommandSetBlipName("STRING")
+                AddTextComponentString('Vehicle GPS')
+                EndTextCommandSetBlipName(gps)
+
+                SetEntityAsMissionEntity(yourVehicle, true, true)
+                
+                local plate = GetVehicleNumberPlateText(yourVehicle)
+                TriggerServerEvent('garage:addKeys', plate)
+                Citizen.Wait(100)
+                TriggerServerEvent('erp_garage:modifystate', vehicleProps, 0, nil)
+                HandleCamera(cachedData["currentGarage"])
+            end)
+
+            if isRecovery then
+                esx.ShowNotification('You have ~g~recovered~s~ your vehicle for ~r~$' .. tostring(amount), false, true)
+            else
+                esx.ShowNotification('Your vehicle is ready', false, true)
+            end
+        else
+            esx.ShowNotification('Cannot recover your vehicle. Requires a payment of ~r~$' .. tostring(amount), false, false, 130)
+        end
+
+    end
+
+    -- Trigger the event
+    if isRecovery then
+        esx.TriggerServerCallback("skull_garage:pay", callback)
+    else 
+        callback(true, 0)
+    end
 end
-
-
 
 PutInVehicle = function()
     local vehicle = GetVehiclePedIsUsing(PlayerPedId())
@@ -109,7 +122,7 @@ PutInVehicle = function()
 				AbrirMenuGuardar()
             else
                 CloseMenu()
-                TriggerEvent('notification', 'This vehicle does not belong to you', 2)
+                esx.ShowNotification('This vehicle does not ~r~belong~s~ to you')
 			end
 
 		end, vehicleProps)
@@ -132,7 +145,8 @@ SaveInGarage = function(garage)
     Citizen.Wait(300)
 
 
-    TriggerEvent('notification', 'You saved your vehicle in garage '..garage, 3)
+    -- TriggerEvent('notification', 'You saved your vehicle in garage '..garage, 3)
+    esx.ShowNotification('Vehicle ~g~stored~s~ in the garage '..garage)
     Citizen.Wait(500)
 
     deleteCar(vehicle)
@@ -338,6 +352,7 @@ WaitForModel = function(model)
     end
 
     if not IsModelValid(model) then
+        print('Model does not exist in the game')
         return TriggerEvent('notification', 'This model does not exist in the game, send a report!', 2)
     end
 

@@ -193,18 +193,25 @@ function Menu.renderButtons()
 end
 
 --------------------------------------------------------------------------------------------------------------------
-
+function CloseMenu()
+	HandleCamera(currentGarage, false)
+	TriggerEvent("inmenu",false) 
+	ClearMenu()	
+	Menu.hidden = true
+end
 
 function ClearMenu()
 	--Menu = {}
 	Menu.GUI = {}
 	Menu.buttonCount = 0
 	Menu.selection = 0
+	EnableControlAction(0, 23, true)
 end
 
 
 function OpenMenu() 
 	ClearMenu()	
+	Menu.hidden = false
 end
 
 function MenuCallFunction(fnc, arg)

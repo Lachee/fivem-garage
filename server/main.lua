@@ -1,11 +1,11 @@
 esx = nil
 
 local cachedData = {}
+local recoveryCost = 200;
 
 TriggerEvent("esx:getSharedObject", function(library) 
 	esx = library 
 end)
-
 
 esx.RegisterServerCallback("erp_garage:fetchVehicles", function(source, callback, garage)
 	local player = esx.GetPlayerFromId(source)
@@ -76,29 +76,48 @@ esx.RegisterServerCallback("erp_garage:validateVehicle", function(source, callba
 		callback(false)
 	end
 end)
-
-esx.RegisterServerCallback('erp_garage:checkMoney', function(source, cb)
+-- Used to precheck if they can pay.
+esx.RegisterServerCallback('skull_garage:checkPurchase', function(source, cb)
+	print('Been told to check money');
 	local xPlayer = esx.GetPlayerFromId(source)
 	local deudas = 0
-	local result = MySQL.Sync.fetchAll('SELECT * FROM billing WHERE identifier = @identifier',{['@identifier'] = xPlayer.identifier})
-	for i=1, #result, 1 do
-		amount     = result[i].amount
-		deudas = deudas + amount
-		if deudas >= 2000 then
-			cb("deudas")
-		end
-	end
-	if xPlayer.get('money') >= 200 then
-		cb(true)
+	
+	-- local result = MySQL.Sync.fetchAll('SELECT * FROM billing WHERE identifier = @identifier',{['@identifier'] = xPlayer.identifier})
+	-- if #results > 0 then
+	-- 	print("User has debt to pay")
+	-- 	for i=1, #result, 1 do
+	-- 		amount     = result[i].amount
+	-- 		deudas = deudas + amount
+	-- 		if deudas >= 2000 then
+	-- 			cb("in-debt", deudas)
+	-- 		end
+	-- 	end
+	-- end
+	
+	local money = xPlayer.getMoney()
+	if money >= recoveryCost then
+		cb(true, recoveryCost)
 	else
-		cb(false)
+		cb(false, recoveryCost)
 	end
 end)
 
-RegisterServerEvent('erp_garage:pay')
-AddEventHandler('erp_garage:pay', function()
+-- Called when they go to make the purchase and actually recover the vehicle
+esx.RegisterServerCallback('skull_garage:pay', function(source, callback)
 	local xPlayer = esx.GetPlayerFromId(source)
-	xPlayer.removeMoney(200)
+	
+	--Check they have the money 
+	local money = xPlayer.getMoney()
+	if money >= recoveryCost then
+		--Remove the money
+		xPlayer.removeMoney(200)		
+		callback(true, recoveryCost)
+	else
+		-- Malicious client?
+		print("User attempted to pay for a recovery without having cash. Hacked client?")
+		callback(false, recoveryCost)
+	end
+
 end)
 
 RegisterServerEvent('erp_garage:modifystate')

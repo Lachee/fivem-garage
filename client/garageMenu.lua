@@ -63,19 +63,22 @@ end
 -- Attempts to recover the vehicle
 function RecoverVehicle(vehicle)
     print('Attempted Recovery: ' .. vehicle.plate)
-    esx.TriggerServerCallback('erp_garage:checkMoney', function(hasEnoughMoney)
-        if hasEnoughMoney == true then
+    esx.TriggerServerCallback('skull_garage:checkPurchase', function(valid, cost)
+        print("event callback")
+        if valid == true then
+            -- We were succesful!
             print('Recovery: Enough Money');
             SpawnVehicle({vehicle, nil}, true)
-            TriggerEvent('notification', 'Vehicle recovered', 2)
-        elseif hasEnoughMoney == "deudas" then
+        elseif valid == "in-debt" then
+            --  We own the governmnet money
             print('Recovery: In Debt');
             MenuRecoveryList()
-            TriggerEvent('notification', 'You owe the government more than $ 2000, you can\'t get your car back until you pay your fines!', 2)
+            esx.ShowNotification('You owe the government more than ~r~$'.. tostring(cost) ..'~s~, you can\'t get your car back until you pay your fines!')
         else
-            print('Recovery: Not Enough Money');
+            -- We dont have enough money
+            print('Not enough money. Recovery costs $' .. tostring(result));
             MenuRecoveryList()
-            TriggerEvent('notification', 'There\'s no money on it', 2)
+            esx.ShowNotification('Not enough money. Recovery costs ~r~$' .. tostring(cost), false, false, 130)
         end
     end)
 end
@@ -181,11 +184,6 @@ function OptionVehicle(data)
    Menu.addButton("Turn back", "MenuVehicleList", nil)
 end
 
-function CloseMenu()
-    HandleCamera(currentGarage, false)
-	TriggerEvent("inmenu",false)
-    Menu.hidden = true
-end
 
 function LocalPed()
 	return GetPlayerPed(-1)

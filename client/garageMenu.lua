@@ -13,8 +13,8 @@ function MenuGarage(action)
     Citizen.Wait(150)
     DeleteActualVeh()
     if action == "menu" then
-        Menu.addButton("List of vehicles","MenuVehicleList",nil)      -- Lists all Vehicles
-        Menu.addButton("Recover","MenuRecoveryList",nil)                   -- Lists all recoveries
+        Menu.addButton("Parked Vehicles","MenuVehicleList",nil)      -- Lists all Vehicles
+        Menu.addButton("Vehicle Recovery","MenuRecoveryList",nil)                   -- Lists all recoveries
         Menu.addButton("Close","CloseMenu",nil)                     -- Closes the menu
     elseif action == "vehicle" then
         PutInVehicle()
@@ -93,8 +93,8 @@ function AbrirMenuGuardar()
    ped = GetPlayerPed(-1);
    MenuTitle = "Save :"
    ClearMenu()
-   Menu.addButton("CLOSE","CloseMenu",nil)
-   Menu.addButton("GARAGE: "..currentGarage.." | STORING THE CAR", "SaveInGarage", currentGarage, "", "", "","DeleteActualVeh")
+   Menu.addButton("Cancel","CloseMenu",nil)
+   Menu.addButton("STORE VEHICLE INTO " .. currentGarage, "SaveInGarage", currentGarage, "", "", "","DeleteActualVeh")
 end
 
 -- Lists the recoveries
@@ -106,31 +106,32 @@ function MenuRecoveryList()
         return 
     end
 
-    print('Recovery to Garage:');
-    print(currentGarage);
 
    HandleCamera(currentGarage, true)
    ped = GetPlayerPed(-1);
-   MenuTitle = "Recover :"
+   MenuTitle = "Recovery"
    ClearMenu()
-   Menu.addButton("Turn back","MenuGarage",nil)
+   Menu.addButton("back","MenuGarage",nil)
     for c,v in pairs(recoveryVehicles) do
         local vehicle = v.vehiculo
+        local entity = FindVehicleByPlate(vehicle.plate)
 
         -- Get the text version of the state.
         -- This is a guess
-        local state = "STOLEN"
-        if v.state == 0 then
-            state = "MISSING"
+        local state = "N/A"
+        if entity ~= nil then
+            state = "STREET PARKED"
+        elseif v.state == 0 then
+            state = "IMPOUNDED"
         elseif v.state == 1 then 
             state = "STORED"
         elseif v.state == 2 then
-            state = "IMPOUNDED"
+            state = "EVIDENCE"
         end
 
         if v.state == 0 or v.state == false then
             Menu.addButton(
-                "" ..(vehicle.plate).." | "..GetDisplayNameFromVehicleModel(vehicle.model), -- Button Name
+                "" ..(vehicle.plate).."    "..GetDisplayNameFromVehicleModel(vehicle.model), -- Button Name
                 "RecoverVehicle", 
                 vehicle, 
                 state, 
@@ -155,13 +156,14 @@ function MenuVehicleList()
    ped = GetPlayerPed(-1);
    MenuTitle = "My vehicles :"
    ClearMenu()
-   Menu.addButton("Turn back","MenuGarage",nil)
+   Menu.addButton("back","MenuGarage",nil)
     for c,v in pairs(fetchedVehicles) do
         if v then
             local vehicle = v.vehiculo
             Menu.addButton(
-                "" ..(vehicle.plate).." | "..GetDisplayNameFromVehicleModel(vehicle.model), -- Button Name
-                "OptionVehicle",                                                            -- Button Callback
+                "" ..(vehicle.plate).."    "..GetDisplayNameFromVehicleModel(vehicle.model), -- Button Name
+                --"OptionVehicle",                                                            -- Button Callback
+                "SpawnVehicle",                                                             -- That extra button sucks
                 {vehicle,nil},                                                              -- Callback Options
                 "garage: "..currentGarage.."",                                              -- Additional data
                 " Motor : " .. round(vehicle.engineHealth) /10 .. "%", 
@@ -180,8 +182,8 @@ end
 function OptionVehicle(data)
    MenuTitle = "Options :"
    ClearMenu()
+   Menu.addButton("back", "MenuVehicleList", nil)
    Menu.addButton("Spawn Vehicle", "SpawnVehicle", data)
-   Menu.addButton("Turn back", "MenuVehicleList", nil)
 end
 
 

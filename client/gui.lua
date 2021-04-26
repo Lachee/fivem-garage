@@ -153,24 +153,24 @@ function Menu.renderButtons()
 			AddTextComponentString(settings["extra"])
 			DrawText(0.730 + movetext, (settings["ymin"] - 0.009 )) 
 
+			if settings["damages"] ~= "" then
+				SetTextFont(4)
+				SetTextScale(0.31, 0.31)
+				SetTextColour(11, 11, 11, 255)
+				SetTextEntry("STRING") 
+				AddTextComponentString(settings["damages"])
+				DrawText(0.78, (settings["ymin"] - 0.012 )) 
 
-			SetTextFont(4)
-			SetTextScale(0.31, 0.31)
-			SetTextColour(11, 11, 11, 255)
-			SetTextEntry("STRING") 
-			AddTextComponentString(settings["damages"])
-			DrawText(0.78, (settings["ymin"] - 0.012 )) 
+				SetTextFont(4)
+				SetTextScale(0.31, 0.31)
+				SetTextColour(11, 11, 11, 255)
+				SetTextEntry("STRING") 
+				AddTextComponentString(settings["bodydamages"])
+				DrawText(0.845, (settings["ymin"] - 0.012 )) 
 
-			SetTextFont(4)
-			SetTextScale(0.31, 0.31)
-			SetTextColour(11, 11, 11, 255)
-			SetTextEntry("STRING") 
-			AddTextComponentString(settings["bodydamages"])
-			DrawText(0.845, (settings["ymin"] - 0.012 )) 
-
-			
-
-			DrawRect(0.832, settings["ymin"], 0.11, settings["ymax"]-0.002, 255,255,255,199)
+				
+				DrawRect(0.832, settings["ymin"], 0.11, settings["ymax"]-0.002, 255,255,255,199)
+			end
 			--Global.DrawRect(x, y, width, height, r, g, b, a)
 		else
 			SetTextFont(4)

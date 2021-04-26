@@ -5,6 +5,23 @@ DeleteActualVeh = function()
 	end
 end
 
+-- Finds a vehicle by the given plate
+FindVehicleByPlate = function(plate) 
+    local gameVehicles = esx.Game.GetVehicles()
+    for i = 1, #gameVehicles do
+        local vehicle = gameVehicles[i]
+    
+        if DoesEntityExist(vehicle) then
+            if Config.Trim(GetVehicleNumberPlateText(vehicle)) == Config.Trim(plate) then
+                return vehicle
+            end
+        end
+    end
+
+    return nil
+end
+
+--Spawns a local vehicle
 SpawnLocalVehicle = function(data)
     local vehicleProps = data
     if not vehicleProps.model then
@@ -36,6 +53,7 @@ SpawnLocalVehicle = function(data)
 	end)
 end
 
+-- Spawns a vehicle for real
 SpawnVehicle = function(data, isRecovery)
     local vehicleProps = data[1]
 	local spawnpoint = Config.Garages[cachedData["currentGarage"]]["positions"]["vehicle"]
@@ -52,42 +70,33 @@ SpawnVehicle = function(data, isRecovery)
     end
 
     -- Make sure the vehicle doesn't already exist
-    local gameVehicles = esx.Game.GetVehicles()
-    for i = 1, #gameVehicles do
-        local vehicle = gameVehicles[i]
-    
-        if DoesEntityExist(vehicle) then
-            if Config.Trim(GetVehicleNumberPlateText(vehicle)) == Config.Trim(vehicleProps["plate"]) then
-                if esx.Game.IsVehicleEmpty(vehicle) then
-                    if Config.AllowTows then
-                        
-                        -- Pay for the tow
-                        esx.TriggerServerCallback("skull_garage:pay", function(success, amount) 
-                            if success then
-                                -- Teleport the vehicle here
-                                esx.Game.Teleport(vehicle, spawnpoint["position"], function()
-                                    esx.ShowNotification('Your vehicle has been towed here for ~r~' .. tomoney(amount), false, false, 13)
-                                    CloseMenu()
-                                end)
-                            else
-                                esx.ShowNotification('Cannot recover your vehicle. Requires a payment of ~r~' .. tomoney(amount), false, false, 130)
-                            end
+    local existingVehicle = FindVehicleByPlate(vehicleProps["plate"])
+    if existingVehicle ~= nil then
+        if esx.Game.IsVehicleEmpty(existingVehicle) then
+            if Config.AllowTows then                        
+                -- Pay for the tow
+                esx.TriggerServerCallback("skull_garage:pay", function(success, amount) 
+                    if success then
+                        -- Teleport the vehicle here
+                        esx.Game.Teleport(existingVehicle, spawnpoint["position"], function()
+                            esx.ShowNotification('Your vehicle has been towed here for ~r~' .. tomoney(amount), false, false, 13)
+                            CloseMenu()
                         end)
-                      
-                        -- Return early
-                        return HandleCamera(cachedData["currentGarage"])
                     else
-                        -- The vehicle is on the street but we dont allow tows
-                        esx.ShowNotification('Your vehicle is already in the streets.', false, false, 13)
-                        return HandleCamera(cachedData["currentGarage"])
+                        esx.ShowNotification('Cannot recover your vehicle. Requires a payment of ~r~' .. tomoney(amount), false, false, 130)
                     end
-                else
-                    -- Someone is currently in the vehicle
-                    esx.ShowNotification('Sorry, but your vehicle has currently been ~r~stolen~s~!.', false, true, 13)
-                    return HandleCamera(cachedData["currentGarage"])
-                end    
+                end)
+            else
+                -- The vehicle is on the street but we dont allow tows
+                esx.ShowNotification('Your vehicle is already in the streets.', false, false, 13)
             end
-        end
+        else
+            -- Someone is currently in the vehicle
+            esx.ShowNotification('Sorry, but your vehicle has currently been ~r~stolen~s~!.', false, true, 13)
+        end    
+
+        -- Always abort here cause the vehicle exists
+        return HandleCamera(cachedData["currentGarage"])
     end
 
     -- Close the menu

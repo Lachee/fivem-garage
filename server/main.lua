@@ -7,7 +7,7 @@ TriggerEvent("esx:getSharedObject", function(library)
 end)
 
 
-esx.RegisterServerCallback("erp_garage:obtenerVehiculos", function(source, callback, garage)
+esx.RegisterServerCallback("erp_garage:fetchVehicles", function(source, callback, garage)
 	local player = esx.GetPlayerFromId(source)
 
 	if player then
@@ -20,35 +20,31 @@ esx.RegisterServerCallback("erp_garage:obtenerVehiculos", function(source, callb
 				owner = @cid
 		]]
 
-		if garage then
-			sqlQuery = [[
-				SELECT
-					plate, vehicle
-				FROM
-					owned_vehicles
-				WHERE
-					owner = @cid and garage = @garage
-			]]
-		end
+		-- if garage then
+		-- 	sqlQuery = [[
+		-- 		SELECT
+		-- 			plate, vehicle
+		-- 		FROM
+		-- 			owned_vehicles
+		-- 		WHERE
+		-- 			owner = @cid and garage = @garage
+		-- 	]]
+		-- end
+
 
 		MySQL.Async.fetchAll(sqlQuery, {
 			["@cid"] = player["identifier"],
 			["@garage"] = garage
 		}, function(responses)
-			--[[ for c,v in pairs(responses) do
-				print(v.plate)
-			end ]]
-			getPlayerVehiclesOut(player.identifier ,function(data)
-				enviar = {responses,data}
-				callback(enviar)
-			end)
+			callback(responses)
 		end)
 	else
 		callback(false)
 	end
 end)
 
-function getPlayerVehiclesOut(identifier,cb)
+-- Gets a list of vehicles that are currently out of a garage and returns it in the callback
+function getPlayerVehiclesOut(identifier, cb)
 	local vehicles = {}
 	local data = MySQL.Sync.fetchAll("SELECT * FROM owned_vehicles WHERE owner=@identifier",{['@identifier'] = identifier})	
 	cb(data)

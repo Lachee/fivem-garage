@@ -3,6 +3,7 @@ local currentGarage = nil
 local fetchedVehicles = {}
 local fueravehicles = {}
 
+-- Opens the garage menu
 function MenuGarage(action)
     if not action then action = ultimaAccion; elseif not action and not ultimaAccion then action = "menu"; end
     ped = GetPlayerPed(-1);
@@ -12,22 +13,24 @@ function MenuGarage(action)
     Citizen.Wait(150)
     DeleteActualVeh()
     if action == "menu" then
-        Menu.addButton("List of vehicles","ListeVehicule",nil)
-        Menu.addButton("Recover","recuperar",nil)
-        Menu.addButton("Close","CloseMenu",nil) 
+        Menu.addButton("List of vehicles","MenuVehicleList",nil)      -- Lists all Vehicles
+        Menu.addButton("Recover","MenuRecoveryList",nil)                   -- Lists all recoveries
+        Menu.addButton("Close","CloseMenu",nil)                     -- Closes the menu
     elseif action == "vehicle" then
         PutInVehicle()
     end
 end
 
-function EnvioVehLocal(veh)
+-- Adds a table of vehicles to the fetchedVehicle list
+function AddVehicles(vehicles)
     local slots = {}
-    for c,v in pairs(veh) do
+    for c,v in pairs(vehicles) do
         table.insert(slots,{["garage"] = v.garage, ["vehiculo"] = json.decode(v.vehicle)})
     end
     fetchedVehicles = slots
 end
 
+-- Does Something Else?
 function EnvioVehFuera(data)
     local slots = {}
     for c,v in pairs(data) do
@@ -39,36 +42,17 @@ function EnvioVehFuera(data)
     fueravehicles = slots
 end
 
-function recuperar()
-    currentGarage = cachedData["currentGarage"]
 
-    if not currentGarage then
-        CloseMenu()
-        return 
-    end
-
-   HandleCamera(currentGarage, true)
-   ped = GetPlayerPed(-1);
-   MenuTitle = "Recover :"
-   ClearMenu()
-   Menu.addButton("Turn back","MenuGarage",nil)
-    for c,v in pairs(fueravehicles) do
-        local vehicle = v.vehiculo
-        if v.state == 0 or v.state == false then
-            Menu.addButton("SAVE | "..GetDisplayNameFromVehicleModel(vehicle.model), "pagorecupero", vehicle, "CEKILMIS", " Motor : " .. round(vehicle.engineHealth) /10 .. "%", " Fuel : " .. round(vehicle.fuelLevel) .. "%","SpawnLocalVehicle")
-        end
-    end 
-end
 
 function pagorecupero(data)
     esx.TriggerServerCallback('erp_garage:checkMoney', function(hasEnoughMoney)
         if hasEnoughMoney == true then
             SpawnVehicle({data,nil},true)
         elseif hasEnoughMoney == "deudas" then
-            recuperar()
+            MenuRecoveryList()
             TriggerEvent('notification', 'You owe the government more than $ 2000, you can\'t get your car back until you pay your fines!', 2)
         else
-            recuperar()
+            MenuRecoveryList()
             TriggerEvent('notification', 'There\'s no money on it', 2)							
         end
     end)
@@ -88,7 +72,33 @@ function AbrirMenuGuardar()
    Menu.addButton("GARAGE: "..currentGarage.." | STORING THE CAR", "SaveInGarage", currentGarage, "", "", "","DeleteActualVeh")
 end
 
-function ListeVehicule()
+-- Lists the recoveries
+function MenuRecoveryList()
+    currentGarage = cachedData["currentGarage"]
+
+    if not currentGarage then
+        CloseMenu()
+        return 
+    end
+
+    print('Recovery to Garage:');
+    print(currentGarage);
+
+   HandleCamera(currentGarage, true)
+   ped = GetPlayerPed(-1);
+   MenuTitle = "Recover :"
+   ClearMenu()
+   Menu.addButton("Turn back","MenuGarage",nil)
+    for c,v in pairs(fueravehicles) do
+        local vehicle = v.vehiculo
+        if v.state == 0 or v.state == false then
+            Menu.addButton("SAVE | "..GetDisplayNameFromVehicleModel(vehicle.model), "pagorecupero", vehicle, "CEKILMIS", " Motor : " .. round(vehicle.engineHealth) /10 .. "%", " Fuel : " .. round(vehicle.fuelLevel) .. "%","SpawnLocalVehicle")
+        end
+    end 
+end
+
+-- Displays a list of vehicles
+function MenuVehicleList()
     currentGarage = cachedData["currentGarage"]
 
     if not currentGarage then
@@ -118,7 +128,7 @@ function OptionVehicle(data)
    MenuTitle = "Options :"
    ClearMenu()
    Menu.addButton("Spawn Vehicle", "SpawnVehicle", data)
-   Menu.addButton("Turn back", "ListeVehicule", nil)
+   Menu.addButton("Turn back", "MenuVehicleList", nil)
 end
 
 function CloseMenu()

@@ -15,9 +15,9 @@ function MenuGarage(action)
     if action == "menu" then
         if Config.AllowRecovery then
             -- Show the recovery options
-            Menu.addButton("Parked Vehicles","MenuVehicleList",nil)     -- Lists all Vehicles
-            Menu.addButton("Vehicle Recovery","MenuRecoveryList",nil)   -- Lists all recoveries
-            Menu.addButton("Close","CloseMenu",nil)                     -- Closes the menu
+            Menu.addButton("Parked Vehicles", "MenuVehicleList", nil)-- Lists all Vehicles
+            Menu.addButton("Vehicle Recovery", "MenuRecoveryList", nil)-- Lists all recoveries
+            Menu.addButton("Close", "CloseMenu", nil)-- Closes the menu
         else
             -- Immediately show the menu
             MenuVehicleList()
@@ -37,7 +37,7 @@ function AddVehicles(vehicles)
         print(" - C:        " .. c)
         print(" - Vehicle:  " .. v.vehicle)
         print(" - Garage:   " .. v.garage)
-        print(" - State:    " .. v.state) 
+        print(" - State:    " .. v.state)
         
         if v.state == 1 and v.garage ~= nil and v.garage ~= "OUT" then
             --The vehicle is in a valid recovery state, so show in the garage menu
@@ -56,10 +56,10 @@ end
 -- @deprecated
 function EnvioVehFuera(data)
     local slots = {}
-    for c,v in pairs(data) do
+    for c, v in pairs(data) do
         print(v.state)
         if v.state == 0 or v.state == 2 or v.state == false or v.garage == nil then
-            table.insert(slots,{["vehiculo"] = json.decode(v.vehicle),["state"] = v.state})
+            table.insert(slots, {["vehiculo"] = json.decode(v.vehicle), ["state"] = v.state})
         end
     end
     recoveryVehicles = slots
@@ -73,7 +73,7 @@ function RecoverVehicle(vehicle)
         esx.ShowNotification('~r~Vehicle recovery has been disabled.', true, false, 13)
         return
     end
-
+    
     print('Attempted Recovery: ' .. vehicle.plate)
     esx.TriggerServerCallback('skull_garage:checkPurchase', function(valid, cost)
         print("event callback")
@@ -85,7 +85,7 @@ function RecoverVehicle(vehicle)
             --  We own the governmnet money
             print('Recovery: In Debt');
             MenuRecoveryList()
-            esx.ShowNotification('You owe the government more than ~r~'.. tomoney(cost) ..'~s~, you can\'t get your car back until you pay your fines!')
+            esx.ShowNotification('You owe the government more than ~r~' .. tomoney(cost) .. '~s~, you can\'t get your car back until you pay your fines!')
         else
             -- We dont have enough money
             print('Not enough money. Recovery costs ' .. tomoney(result));
@@ -100,24 +100,24 @@ function AbrirMenuGuardar()
     currentGarage = cachedData["currentGarage"]
     if not currentGarage then
         CloseMenu()
-        return 
+        return
     end
-   ped = GetPlayerPed(-1);
-   MenuTitle = "Save :"
-   ClearMenu()
-   Menu.addButton("Cancel","CloseMenu",nil)
-   Menu.addButton("STORE VEHICLE INTO " .. currentGarage, "SaveInGarage", currentGarage, "", "", "","DeleteActualVeh")
+    ped = GetPlayerPed(-1);
+    MenuTitle = "Save :"
+    ClearMenu()
+    Menu.addButton("Cancel", "CloseMenu", nil)
+    Menu.addButton("STORE VEHICLE INTO " .. currentGarage, "SaveInGarage", currentGarage, "", "", "", "DeleteActualVeh")
 end
 
 -- Lists the recoveries
 function MenuRecoveryList()
     currentGarage = cachedData["currentGarage"]
-
+    
     if not currentGarage then
         CloseMenu()
-        return 
+        return
     end
-
+    
     
     if Config.AllowRecovery == false then
         print('Cannot attempt recovery because it has been disabled!')
@@ -125,16 +125,16 @@ function MenuRecoveryList()
         CloseMenu()
         return
     end
-
-   HandleCamera(currentGarage, true)
-   ped = GetPlayerPed(-1);
-   MenuTitle = "Recovery"
-   ClearMenu()
-   Menu.addButton("back","MenuGarage",nil)
-    for c,v in pairs(recoveryVehicles) do
+    
+    HandleCamera(currentGarage, true)
+    ped = GetPlayerPed(-1);
+    MenuTitle = "Recovery"
+    ClearMenu()
+    Menu.addButton("back", "MenuGarage", nil)
+    for c, v in pairs(recoveryVehicles) do
         local vehicle = v.vehiculo
         local entity = FindVehicleByPlate(vehicle.plate)
-
+        
         -- Get the text version of the state.
         -- This is a guess
         local state = "N/A"
@@ -142,61 +142,61 @@ function MenuRecoveryList()
             state = "STREET PARKED"
         elseif v.state == 0 then
             state = "IMPOUNDED"
-        elseif v.state == 1 then 
+        elseif v.state == 1 then
             state = "STORED"
         elseif v.state == 2 then
             state = "EVIDENCE"
         end
-
+        
         if v.state == 0 or v.state == false then
             Menu.addButton(
-                "" ..(vehicle.plate).."    "..GetDisplayNameFromVehicleModel(vehicle.model), -- Button Name
-                "RecoverVehicle", 
-                vehicle, 
-                state, 
-                " Motor : " .. round(vehicle.engineHealth) /10 .. "%", 
+                "" .. (vehicle.plate) .. "    " .. GetDisplayNameFromVehicleModel(vehicle.model), -- Button Name
+                "RecoverVehicle",
+                vehicle,
+                state,
+                " Motor : " .. round(vehicle.engineHealth) / 10 .. "%",
                 " Fuel : " .. round(vehicle.fuelLevel) .. "%",
                 "SpawnLocalVehicle"
-            )
+        )
         end
-    end 
+    end
 end
 
 -- Displays a list of vehicles
 function MenuVehicleList()
     currentGarage = cachedData["currentGarage"]
-
+    
     if not currentGarage then
         CloseMenu()
-        return 
+        return
     end
-
-   HandleCamera(currentGarage, true)
-   ped = GetPlayerPed(-1);
-   MenuTitle = "My vehicles :"
-   ClearMenu()
-
+    
+    HandleCamera(currentGarage, true)
+    ped = GetPlayerPed(-1);
+    MenuTitle = "My vehicles :"
+    ClearMenu()
+    
     if Config.AllowRecovery then
         -- If we are allowing recovery, then this menu goes back
-        Menu.addButton("back","MenuGarage",nil)
+        Menu.addButton("back", "MenuGarage", nil)
     else
         -- We dont allow recovery, so this menu closes
-        Menu.addButton("Close","CloseMenu",nil)
+        Menu.addButton("Close", "CloseMenu", nil)
     end
-
-    for c,v in pairs(fetchedVehicles) do
+    
+    for c, v in pairs(fetchedVehicles) do
         if v then
             local vehicle = v.vehiculo
             Menu.addButton(
-                "" ..(vehicle.plate).."    "..GetDisplayNameFromVehicleModel(vehicle.model), -- Button Name
+                "" .. (vehicle.plate) .. "    " .. GetDisplayNameFromVehicleModel(vehicle.model), -- Button Name
                 --"OptionVehicle",                                                            -- Button Callback
-                "SpawnVehicle",                                                             -- That extra button sucks
-                {vehicle,nil},                                                              -- Callback Options
-                "garage: "..currentGarage.."",                                              -- Additional data
-                " Motor : " .. round(vehicle.engineHealth) /10 .. "%", 
+                "SpawnVehicle", -- That extra button sucks
+                {vehicle, nil}, -- Callback Options
+                "garage: " .. currentGarage .. "", -- Additional data
+                " Motor : " .. round(vehicle.engineHealth) / 10 .. "%",
                 " Fuel : " .. round(vehicle.fuelLevel) .. "%",
-                "SpawnLocalVehicle"                                                         -- Hover Callback
-            )
+                "SpawnLocalVehicle" -- Hover Callback
+        )
         end
     end
 end
@@ -208,13 +208,13 @@ end
 
 -- @deprecated was originally used to add extra options to the vehicle
 function OptionVehicle(data)
-   MenuTitle = "Options :"
-   ClearMenu()
-   Menu.addButton("back", "MenuVehicleList", nil)
-   Menu.addButton("Spawn Vehicle", "SpawnVehicle", data)
+    MenuTitle = "Options :"
+    ClearMenu()
+    Menu.addButton("back", "MenuVehicleList", nil)
+    Menu.addButton("Spawn Vehicle", "SpawnVehicle", data)
 end
 
 
 function LocalPed()
-	return GetPlayerPed(-1)
+    return GetPlayerPed(-1)
 end

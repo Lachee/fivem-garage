@@ -16,3 +16,9 @@ git cloen https://github.com/Lachee/fivem-garage.git esx_garage
 This will replace the previous garage with this one.
 
 **Dont forget to run the `.sql` in the `sql/` folder**
+
+### TODO 
+
+- Cars only garages you park them at
+- Fix camera
+- Close menu when leaving zone

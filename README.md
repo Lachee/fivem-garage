@@ -1,7 +1,8 @@
 # fivem-garage
 Customised version of a Garage Script for SkullFace's server.
-<video src="https://i.lu.je/2021/0YmegSETIa.mp4" />
-  [Example MP4](https://i.lu.je/2021/0YmegSETIa.mp4)
+
+<video src="https://i.lu.je/2021/0YmegSETIa.mp4"></video>
+Watch an [Example MP4](https://i.lu.je/2021/0YmegSETIa.mp4) ( hosted on my CDN )
 
 # Installation
 

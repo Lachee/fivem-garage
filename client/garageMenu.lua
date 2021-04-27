@@ -33,8 +33,10 @@ function AddVehicles(vehicles)
     local garage = {}
     local recovs = {}
     for c, v in pairs(vehicles) do
-        if v.state == 1 and v.garage ~= nil and v.garage ~= "OUT" then
+        print(tostring(c) .. " - " .. v.garage .. " - " .. v.plate)
+        if (v.state == 1 or v.state == true) and v.garage ~= nil and v.garage ~= "OUT" then
             --The vehicle is in a valid recovery state, so show in the garage menu
+            print(" - Garage")
             table.insert(garage, {["garage"] = v.garage, ["vehiculo"] = json.decode(v.vehicle), ["state"] = v.state, ["plate"] = v.plate})
         else
             --The vehicle is not in a valid recovery state, so show in the recovery
@@ -136,7 +138,7 @@ function MenuRecoveryList()
             state = "STREET PARKED"
         elseif v.state == 0 then
             state = "IMPOUNDED"
-        elseif v.state == 1 then
+        elseif (v.state == 1 or v.state == true) then
             state = "STORED"
         elseif v.state == 2 then
             state = "EVIDENCE"

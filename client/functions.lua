@@ -320,12 +320,23 @@ HandleCamera = function(garage, toggle)
     Citizen.Wait(500)
 end
 
-
-
 DrawScriptMarker = function(markerData)
-    DrawMarker(20, markerData["pos"], 0, 0, 0, 0, 0, 0, 0.701, 1.0001, 0.3001, 222, 50, 50, 0.05, 0, 0, 0, 0, 0, 0, 0)
+    -- Get the position and snap it to the ground
+    local pos = markerData["pos"]
+    local retval, groundZ = GetGroundZFor_3dCoord(pos.x, pos.y, pos.z, 0)
+    if retval then
+        pos = vector3(pos.x, pos.y, groundZ)
+    end
+
+    -- Prepare the markers
+    local size  = { x = markerData["sizeX"], y = markerData["sizeX"], z = 1.0 }
+    local colour = Config.Colour
+
+    -- Draw the markers and show the interact text
+    DrawMarker(1, pos.x, pos.y, pos.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, size.x, size.y, size.z, colour.r, colour.g, colour.b, 0.05, 0, 0, 0, 0, 0, 0, 0)
+    esx.ShowHelpNotification("Press ~g~E~s~ to interact with the garage at the coloured markers")
+
     --esx.ShowHelpNotification("~g~E ~w~or ~g~ENTER ~w~Accepts ~g~Arrows ~w~Move ~g~Backspace ~w~Exit")
-    esx.ShowHelpNotification("Press ~g~E~s~ to interact with the garage at the ~r~red~s~ chevrons")
 end
 
 PlayAnimation = function(ped, dict, anim, settings)

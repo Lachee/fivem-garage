@@ -104,8 +104,6 @@ Citizen.CreateThread(function()
                         })
                     end
                 elseif (dstCheck > 10.0 and dentro == garage) then
-                    print(dentro)
-                    print(garage)
                     dentro = nil
                 end
             end

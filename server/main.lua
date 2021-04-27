@@ -8,23 +8,10 @@ TriggerEvent("esx:getSharedObject", function(library)
 end)
 
 esx.RegisterServerCallback("erp_garage:fetchVehicles", function(source, callback, garage)
-    local player = esx.GetPlayerFromId(source)
+    local xPlayer = esx.GetPlayerFromId(source)
     
-    if player then
-        local sqlQuery = [[
-			SELECT
-				plate, vehicle, garage, state
-			FROM
-				owned_vehicles
-			WHERE
-				owner = @cid
-		]]
-        
-        
-        
-        
-        
-        
+    if xPlayer then
+     
         
         
         -- if garage then
@@ -37,13 +24,13 @@ esx.RegisterServerCallback("erp_garage:fetchVehicles", function(source, callback
         -- 			owner = @cid and garage = @garage
         -- 	]]
         -- end
-        MySQL.Async.fetchAll(sqlQuery, {
-            ["@cid"] = player.identifier, --["identifier"],
-            ["@garage"] = garage
-        }, function(responses)
-            callback(responses)
-        end)
+        
+        local identifier = xPlayer.getIdentifier()
+        local data = MySQL.Sync.fetchAll("SELECT * FROM owned_vehicles WHERE owner=@identifier", {['@identifier'] = identifier})
+        print(esx.DumpTable(data));
+        callback(data)
     else
+        print('Player doesnt exists')
         callback(false)
     end
 end)

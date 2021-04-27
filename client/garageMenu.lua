@@ -33,12 +33,6 @@ function AddVehicles(vehicles)
     local garage = {}
     local recovs = {}
     for c, v in pairs(vehicles) do
-        print("Checking Vehicle:")
-        print(" - C:        " .. c)
-        print(" - Vehicle:  " .. v.vehicle)
-        print(" - Garage:   " .. v.garage)
-        print(" - State:    " .. v.state)
-        
         if v.state == 1 and v.garage ~= nil and v.garage ~= "OUT" then
             --The vehicle is in a valid recovery state, so show in the garage menu
             table.insert(garage, {["garage"] = v.garage, ["vehiculo"] = json.decode(v.vehicle), ["state"] = v.state, ["plate"] = v.plate})

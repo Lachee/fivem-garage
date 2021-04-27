@@ -421,5 +421,9 @@ end
 
 --Converts the value to money
 function tomoney(value)
+    if value == nil then
+        return '~g~FREE'
+    end
+    
     return '$' .. tostring(esx.Math.GroupDigits(value))
 end

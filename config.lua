@@ -17,7 +17,7 @@ Config.Garages = {
                 ["heading"] = 160.0
             }
         },
-        ["camera"] = {
+        ["camera_fake"] = {
             ["x"] = 283.28225708008,
             ["y"] = -333.24017333984,
             ["z"] = 50.004745483398,
@@ -36,7 +36,7 @@ Config.Garages = {
                 ["heading"] = 320.0
             }
         },
-        ["camera"] = {
+        ["camera_fake"] = {
             ["x"] = -1813.5513916016,
             ["y"] = -340.40087890625,
             ["z"] = 46.962894439697,
@@ -104,7 +104,7 @@ Config.Garages = {
                 ["heading"] = 319.3
             }
         },
-        ["camera"] = {
+        ["camera_fake"] = {
             ["x"] = 1023.97,
             ["y"] = -756.88062744141,
             ["z"] = 59.571212768555,
@@ -174,7 +174,7 @@ Config.Garages = {
             }
         },
         
-        ["camera"] = {
+        ["camera_fake"] = {
             ["x"] = 231.94,
             ["y"] = -803.61,
             ["z"] = 32.51,
@@ -275,7 +275,7 @@ Config.Garages = {
                 ["text"] = "[ ~o~E~s~ ] Store Vehicle",
             }
         },
-        ["camera"] = {
+        ["camera_fake"] = {
             ["x"] = -709.066,
             ["y"] = -1348.404,
             ["z"] = 5.970,
@@ -296,7 +296,7 @@ Config.Garages = {
                 ["text"] = "[ ~o~E~s~ ] Store Vehicle",
             }
         },
-        ["camera"] = {
+        ["camera_fake"] = {
             ["x"] = -1301.229,
             ["y"] = -3385.397,
             ["z"] = 24.265,
@@ -317,7 +317,7 @@ Config.Garages = {
                 ["text"] = "[ ~o~E~s~ ] Store Vehicle",
             }
         },
-        ["camera"] = {
+        ["camera_fake"] = {
             ["x"] = 901.102,
             ["y"] = -1256.479,
             ["z"] = 31.271,

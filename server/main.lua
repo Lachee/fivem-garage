@@ -38,7 +38,7 @@ esx.RegisterServerCallback("erp_garage:fetchVehicles", function(source, callback
         -- 	]]
         -- end
         MySQL.Async.fetchAll(sqlQuery, {
-            ["@cid"] = player["identifier"],
+            ["@cid"] = player.identifier, --["identifier"],
             ["@garage"] = garage
         }, function(responses)
             callback(responses)

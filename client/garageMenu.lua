@@ -13,9 +13,15 @@ function MenuGarage(action)
     Citizen.Wait(150)
     DeleteActualVeh()
     if action == "menu" then
-        Menu.addButton("Parked Vehicles","MenuVehicleList",nil)      -- Lists all Vehicles
-        Menu.addButton("Vehicle Recovery","MenuRecoveryList",nil)                   -- Lists all recoveries
-        Menu.addButton("Close","CloseMenu",nil)                     -- Closes the menu
+        if Config.AllowRecovery then
+            -- Show the recovery options
+            Menu.addButton("Parked Vehicles","MenuVehicleList",nil)     -- Lists all Vehicles
+            Menu.addButton("Vehicle Recovery","MenuRecoveryList",nil)   -- Lists all recoveries
+            Menu.addButton("Close","CloseMenu",nil)                     -- Closes the menu
+        else
+            -- Immediately show the menu
+            MenuVehicleList()
+        end
     elseif action == "vehicle" then
         PutInVehicle()
     end
@@ -62,6 +68,12 @@ end
 
 -- Attempts to recover the vehicle
 function RecoverVehicle(vehicle)
+    if Config.AllowRecovery == false then
+        print('Cannot attempt recovery because it has been disabled!')
+        esx.ShowNotification('~r~Vehicle recovery has been disabled.', true, false, 13)
+        return
+    end
+
     print('Attempted Recovery: ' .. vehicle.plate)
     esx.TriggerServerCallback('skull_garage:checkPurchase', function(valid, cost)
         print("event callback")
@@ -106,6 +118,13 @@ function MenuRecoveryList()
         return 
     end
 
+    
+    if Config.AllowRecovery == false then
+        print('Cannot attempt recovery because it has been disabled!')
+        esx.ShowNotification('~r~Vehicle recovery has been disabled.', true, false, 13)
+        CloseMenu()
+        return
+    end
 
    HandleCamera(currentGarage, true)
    ped = GetPlayerPed(-1);
@@ -156,7 +175,15 @@ function MenuVehicleList()
    ped = GetPlayerPed(-1);
    MenuTitle = "My vehicles :"
    ClearMenu()
-   Menu.addButton("back","MenuGarage",nil)
+
+    if Config.AllowRecovery then
+        -- If we are allowing recovery, then this menu goes back
+        Menu.addButton("back","MenuGarage",nil)
+    else
+        -- We dont allow recovery, so this menu closes
+        Menu.addButton("Close","CloseMenu",nil)
+    end
+
     for c,v in pairs(fetchedVehicles) do
         if v then
             local vehicle = v.vehiculo
@@ -179,6 +206,7 @@ function round(n)
     return n % 1 >= 0.5 and math.ceil(n) or math.floor(n)
 end
 
+-- @deprecated was originally used to add extra options to the vehicle
 function OptionVehicle(data)
    MenuTitle = "Options :"
    ClearMenu()

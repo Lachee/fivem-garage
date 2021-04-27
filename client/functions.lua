@@ -58,6 +58,12 @@ SpawnVehicle = function(data, isRecovery)
     local vehicleProps = data[1]
 	local spawnpoint = Config.Garages[cachedData["currentGarage"]]["positions"]["vehicle"]
 
+    if isRecovery == true and Config.AllowRecovery == false then
+        print('Cannot attempt recovery because it has been disabled!')
+        esx.ShowNotification('~r~Vehicle recovery has been disabled.', true, false, 13)
+        return
+    end
+
     -- Ensure we are allowed to spawn a vehicle here
     WaitForModel(vehicleProps["model"])
     if DoesEntityExist(cachedData["vehicle"]) then

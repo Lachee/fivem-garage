@@ -128,7 +128,8 @@ function MenuRecoveryList()
         return
     end
     
-    HandleCamera(currentGarage, true)
+    AttachGarageCamera(currentGarage)
+
     ped = GetPlayerPed(-1);
     MenuTitle = "Recovery"
     ClearMenu()
@@ -167,13 +168,13 @@ end
 -- Displays a list of vehicles
 function MenuVehicleList()
     currentGarage = cachedData["currentGarage"]
-    
     if not currentGarage then
         CloseMenu()
         return
     end
     
-    HandleCamera(currentGarage, true)
+    AttachGarageCamera(currentGarage)
+
     ped = GetPlayerPed(-1);
     MenuTitle = "My vehicles :"
     ClearMenu()

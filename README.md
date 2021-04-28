@@ -33,6 +33,3 @@ This will replace the previous garage with this one.
 
 **Dont forget to run the `.sql` in the `sql/` folder**
 
-### TODO 
-
-- Fix camera

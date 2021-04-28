@@ -101,7 +101,7 @@ SpawnVehicle = function(data, isRecovery)
         end
         
         -- Always abort here cause the vehicle exists
-        return HandleCamera(cachedData["currentGarage"])
+        return
     end
     
     -- Close the menu
@@ -130,7 +130,6 @@ SpawnVehicle = function(data, isRecovery)
                 TriggerServerEvent('garage:addKeys', plate)
                 Citizen.Wait(100)
                 TriggerServerEvent('erp_garage:modifystate', vehicleProps, 0, nil)
-                HandleCamera(cachedData["currentGarage"])
             end)
             
             if isRecovery then
@@ -285,38 +284,47 @@ HandleAction = function(action)
     end
 end
 
-HandleCamera = function(garage, toggle)
+-- Detatches the camera from the garage
+DetatchGarageCamera = function() 
+    -- currentGarage = cachedData["currentGarage"]
+    -- if not currentGarage then
+    --     return false
+    -- end
+
+    print('Detatch Camera ')    
+
+    -- Destroy the cam
+    if cachedData["cam"] then
+        DestroyCam(cachedData["cam"])
+    end
+        
+    -- Revert
+    RenderScriptCams(0, 1, 750, 1, 0)
+    return true
+end
+
+-- Attaches the camera to a particular garage
+AttachGarageCamera = function(garage)
     if not garage then return; end
-    local Camerapos = Config.Garages[garage]["camera"]
-    
+
+    local Camerapos = Config.Garages[garage]["camera"]    
     if not Camerapos then return end
     
-    if not toggle then
-        if cachedData["cam"] then
-            DestroyCam(cachedData["cam"])
-        end
-        
-        if DoesEntityExist(cachedData["vehicle"]) then
-            DeleteEntity(cachedData["vehicle"])
-        end
-        
-        RenderScriptCams(0, 1, 750, 1, 0)
-        
-        return
-    end
-    
+    print('Attach Camera Camera ' .. garage)    
+
+    -- Clear previous camera
     if cachedData["cam"] then
         DestroyCam(cachedData["cam"])
     end
     
+    -- Create the script and make it active
     cachedData["cam"] = CreateCam("DEFAULT_SCRIPTED_CAMERA", true)
-    
     SetCamCoord(cachedData["cam"], Camerapos["x"], Camerapos["y"], Camerapos["z"])
     SetCamRot(cachedData["cam"], Camerapos["rotationX"], Camerapos["rotationY"], Camerapos["rotationZ"])
     SetCamActive(cachedData["cam"], true)
     
+    -- Render the script
     RenderScriptCams(1, 1, 750, 1, 1)
-    
     Citizen.Wait(500)
 end
 
@@ -424,6 +432,6 @@ function tomoney(value)
     if value == nil then
         return '~g~FREE'
     end
-    
+
     return '$' .. tostring(esx.Math.GroupDigits(value))
 end

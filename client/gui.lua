@@ -192,14 +192,18 @@ end
 
 --------------------------------------------------------------------------------------------------------------------
 function CloseMenu()
+    if Menu.hidden then
+        return
+    end
+
     -- Reset the camera, untrigger the inmenu
-    HandleCamera(currentGarage, false)
     TriggerEvent("inmenu", false)
 
     --Clear the menu
     ClearMenu()
 
     --Finally hide the menu
+    DetatchGarageCamera()
     Menu.hidden = true
 end
 

@@ -15,7 +15,13 @@ Watch an [Example MP4](https://i.lu.je/2021/0YmegSETIa.mp4) ( hosted on my CDN )
 ![Image showing the new circle markers](https://i.lu.je/2021/FiveM_GTAProcess_a1Ufh3YSCc.jpg)
 
 # Installation
+## Requirements
+- FiveM
+- ESX
+- ESX Extended v1
+- MySQL Async
 
+## Via Git ( recommended )
 From your resouces directory for the ESX server:
 ```
 cd "[esx]"

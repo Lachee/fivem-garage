@@ -33,14 +33,14 @@ function AddVehicles(vehicles)
     local garage = {}
     local recovs = {}
     for c, v in pairs(vehicles) do
-        print(tostring(c) .. " - " .. v.garage .. " - " .. v.plate)
+        -- print(tostring(c) .. " - " .. v.garage .. " - " .. v.plate)
         if (v.state == 1 or v.state == true) and v.garage ~= nil and v.garage ~= "OUT" then
             --The vehicle is in a valid recovery state, so show in the garage menu
-            print(" - Garage")
+            -- print(" - Garage")
             table.insert(garage, {["garage"] = v.garage, ["vehiculo"] = json.decode(v.vehicle), ["state"] = v.state, ["plate"] = v.plate})
         else
             --The vehicle is not in a valid recovery state, so show in the recovery
-            print(" - Impounded")
+            -- print(" - Impounded")
             table.insert(recovs, {["garage"] = "OUT", ["vehiculo"] = json.decode(v.vehicle), ["state"] = v.state, ["plate"] = v.plate})
         end
     end
@@ -79,19 +79,18 @@ function RecoverVehicle(vehicle)
     
     print('Attempted Recovery: ' .. vehicle.plate)
     esx.TriggerServerCallback('skull_garage:checkPurchase', function(valid, cost)
-        print("event callback")
         if valid == true then
             -- We were succesful!
-            print('Recovery: Enough Money');
+            -- print('Recovery: Enough Money');
             SpawnVehicle({vehicle, nil}, true)
         elseif valid == "in-debt" then
             --  We own the governmnet money
-            print('Recovery: In Debt');
+            -- print('Recovery: In Debt');
             MenuRecoveryList()
             esx.ShowNotification('You owe the government more than ~r~' .. tomoney(cost) .. '~s~, you can\'t get your car back until you pay your fines!')
         else
             -- We dont have enough money
-            print('Not enough money. Recovery costs ' .. tomoney(result));
+            -- print('Not enough money. Recovery costs ' .. tomoney(result));
             MenuRecoveryList()
             esx.ShowNotification('Not enough money. Recovery costs ~r~' .. tomoney(cost), false, false, 130)
         end

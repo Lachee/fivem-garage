@@ -19,6 +19,4 @@ This will replace the previous garage with this one.
 
 ### TODO 
 
-- Cars only garages you park them at
 - Fix camera
-- Close menu when leaving zone

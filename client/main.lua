@@ -105,6 +105,9 @@ Citizen.CreateThread(function()
                     end
                 elseif (dstCheck > 10.0 and dentro == garage) then
                     dentro = nil
+
+                    -- Close the menu because we are too far
+                    CloseMenu()
                 end
             end
         end

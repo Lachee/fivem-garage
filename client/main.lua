@@ -55,6 +55,7 @@ Citizen.CreateThread(function()
     end
     
     while true do
+        local validMenuLocation = false
         local sleepThread = 500
         
         local ped = PlayerPedId()
@@ -92,6 +93,8 @@ Citizen.CreateThread(function()
                             
                             end
                         end
+
+                        validMenuLocation = true
                         DrawScriptMarker({
                             ["type"] = 27,
                             ["pos"] = actionData["position"] - vector3(0.0, 0.0, 0.0),
@@ -105,14 +108,17 @@ Citizen.CreateThread(function()
                     end
                 elseif (dstCheck > 10.0 and dentro == garage) then
                     dentro = nil
-
-                    -- Close the menu because we are too far
-                    CloseMenu()
                 end
             end
         end
+
         Menu.renderGUI()
         Citizen.Wait(sleepThread)
+
+        -- Close the menu if it's invalid
+        if not validMenuLocation then
+            CloseMenu()
+        end
     end
 end)
 -------------------------------------------------------------------------------------------------------------------------

@@ -192,9 +192,14 @@ end
 
 --------------------------------------------------------------------------------------------------------------------
 function CloseMenu()
+    -- Reset the camera, untrigger the inmenu
     HandleCamera(currentGarage, false)
     TriggerEvent("inmenu", false)
+
+    --Clear the menu
     ClearMenu()
+
+    --Finally hide the menu
     Menu.hidden = true
 end
 
@@ -203,7 +208,12 @@ function ClearMenu()
     Menu.GUI = {}
     Menu.buttonCount = 0
     Menu.selection = 0
+
+    -- Renable the control and delete the local vehicle if it exists
     EnableControlAction(0, 23, true)
+    if DoesEntityExist(cachedData["vehicle"]) then
+        DeleteEntity(cachedData["vehicle"])
+    end
 end
 
 

@@ -69,6 +69,13 @@ function RecoverVehicle(vehicle)
         esx.ShowNotification('~r~Vehicle recovery has been disabled.', true, false, 13)
         return
     end
+
+    -- Early refusal if its in police impound
+    if vehicle.state == 2 then
+        print('Cannot attempt recovery because vehicle is in police impound');
+        esx.ShowNotification('~r~Vehicle is in the ~b~police impound~r~ and cannot be recovered.');
+        return
+    end
     
     print('Attempted Recovery: ' .. vehicle.plate)
     esx.TriggerServerCallback('skull_garage:checkPurchase', function(valid, cost)
@@ -141,7 +148,7 @@ function MenuRecoveryList()
         elseif (v.state == 1 or v.state == true) then
             state = "STORED"
         elseif v.state == 2 then
-            state = "EVIDENCE"
+            state = "POLICE IMPOUNDED"
         end
         
         if v.state == 0 or v.state == false then

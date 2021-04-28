@@ -63,7 +63,10 @@ end
 
 
 -- Attempts to recover the vehicle
-function RecoverVehicle(vehicle)
+function RecoverVehicle(args)
+    local vehicle = args[1]
+    local isTow = args[2]
+
     if Config.AllowRecovery == false then
         print('Cannot attempt recovery because it has been disabled!')
         esx.ShowNotification('~r~Vehicle recovery has been disabled.', true, false, 13)
@@ -77,6 +80,7 @@ function RecoverVehicle(vehicle)
         return
     end
     
+    print('Attempting Recovery. isTow: ' .. tostring(isTow))
     print('Attempted Recovery: ' .. vehicle.plate)
     esx.TriggerServerCallback('skull_garage:checkPurchase', function(valid, cost)
         if valid == true then
@@ -94,7 +98,7 @@ function RecoverVehicle(vehicle)
             MenuRecoveryList()
             esx.ShowNotification('Not enough money. Recovery costs ~r~' .. tomoney(cost), false, false, 130)
         end
-    end)
+    end, isTow)
 end
 
 
@@ -138,13 +142,20 @@ function MenuRecoveryList()
         local vehicle = v.vehiculo
         local entity = FindVehicleByPlate(vehicle.plate)
         
+        local cost = Config.RecoveryCost
+        if entity ~= nil then cost = Config.TowingCost end
+
         -- Get the text version of the state.
         -- This is a guess
         local state = "N/A"
         if entity ~= nil then
+            -- Show on street unless we allow tows
             state = "STREET PARKED"
+            if Config.AllowTows then state = tomoney(cost) end
         elseif v.state == 0 then
-            state = "IMPOUNDED"
+            -- Show the price
+            -- state = "IMPOUNDED"
+            state = tomoney(cost)
         elseif (v.state == 1 or v.state == true) then
             state = "STORED"
         elseif v.state == 2 then
@@ -155,7 +166,7 @@ function MenuRecoveryList()
             Menu.addButton(
                 "" .. (vehicle.plate) .. "    " .. GetDisplayNameFromVehicleModel(vehicle.model), -- Button Name
                 "RecoverVehicle",
-                vehicle,
+                { vehicle, entity ~= nil },
                 state,
                 " Motor : " .. round(vehicle.engineHealth) / 10 .. "%",
                 " Fuel : " .. round(vehicle.fuelLevel) .. "%",

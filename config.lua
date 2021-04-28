@@ -2,7 +2,8 @@ Config = {}
 
 Config.RangeCheck = 25.0
 Config.AllowRecovery = true                 -- Enables recovery from the garages. Disable this if you plan to use other recovery scripts
-Config.RecoveryCost = 250                   -- The cost of a car recovery.
+Config.RecoveryCost = 3000                  -- The cost of a car recovery.
+Config.TowingCost = 750
 Config.AllowTows = true                     -- Allows the car to be teleported to the garage (at a cost) if it has no people inside
 Config.AllowCrossGarageAccess = false       -- Allows vehicles to be spawned from other garages
 Config.Colour = { r = 148, g = 0, b = 211 } -- The colour for the markers

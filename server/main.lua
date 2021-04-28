@@ -1,7 +1,6 @@
 esx = nil
 
 local cachedData = {}
-local recoveryCost = Config.RecoveryCost;
 
 TriggerEvent("esx:getSharedObject", function(library)
     esx = library
@@ -54,14 +53,7 @@ esx.RegisterServerCallback("erp_garage:validateVehicle", function(source, callba
 			WHERE
 				plate = @plate
 		]]
-        
-        
-        
-        
-        
-        
-        
-        
+                
         MySQL.Async.fetchAll(sqlQuery, {
             ["@plate"] = vehicleProps["plate"]
         }, function(responses)
@@ -75,8 +67,9 @@ esx.RegisterServerCallback("erp_garage:validateVehicle", function(source, callba
         callback(false)
     end
 end)
+
 -- Used to precheck if they can pay.
-esx.RegisterServerCallback('skull_garage:checkPurchase', function(source, cb)
+esx.RegisterServerCallback('skull_garage:checkPurchase', function(source, callback, isTow)
     local xPlayer = esx.GetPlayerFromId(source)
     local deudas = 0
     
@@ -92,28 +85,39 @@ esx.RegisterServerCallback('skull_garage:checkPurchase', function(source, cb)
     -- 		end
     --  	end
     -- end
+
+    -- Calculate the cost
+    local cost = Config.RecoveryCost
+    if isTow then cost = Config.TowingCost end
+
+    -- Return the monies
     local money = xPlayer.getMoney()
-    if money >= recoveryCost then
-        cb(true, recoveryCost)
+    if money >= cost then
+        callback(true, cost)
     else
-        cb(false, recoveryCost)
+        callback(false, cost)
     end
 end)
 
 -- Called when they go to make the purchase and actually recover the vehicle
-esx.RegisterServerCallback('skull_garage:pay', function(source, callback)
+esx.RegisterServerCallback('skull_garage:pay', function(source, callback, isTow)
     local xPlayer = esx.GetPlayerFromId(source)
     
+    -- Calculate the cost
+    local cost = Config.RecoveryCost
+    if isTow then cost = Config.TowingCost end
+
     --Check they have the money
     local money = xPlayer.getMoney()
-    if money >= recoveryCost then
+    if money >= cost then
         --Remove the money
-        xPlayer.removeMoney(200)
-        callback(true, recoveryCost)
+        print("user payed back " .. tostring(cost))
+        xPlayer.removeMoney(cost)
+        callback(true, cost)
     else
         -- Malicious client?
         print("User attempted to pay for a recovery without having cash. Hacked client?")
-        callback(false, recoveryCost)
+        callback(false, cost)
     end
 
 end)

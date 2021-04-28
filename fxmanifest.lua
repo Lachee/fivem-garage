@@ -1,4 +1,4 @@
-version '1.1.0'
+version '1.2.0'
 author 'Lachee'
 description 'Modified version of a garage script.'
 repository 'https://github.com/lachee/fivem-garage'

@@ -90,7 +90,7 @@ SpawnVehicle = function(data, isRecovery)
                     else
                         esx.ShowNotification('Cannot recover your vehicle. Requires a payment of ~r~' .. tomoney(amount), false, false, 130)
                     end
-                end)
+                end, true)
             else
                 -- The vehicle is on the street but we dont allow tows
                 esx.ShowNotification('Your vehicle is already in the streets.', false, false, 13)
@@ -108,7 +108,7 @@ SpawnVehicle = function(data, isRecovery)
     CloseMenu()
     
     -- This callback will actually spawn the vehicle if we are allowed, otherwise will give us a notif
-    local callback = function(success, amount)
+    local spawnVehicle = function(success, amount)
         if success then
             esx.Game.SpawnVehicle(vehicleProps["model"], spawnpoint["position"], spawnpoint["heading"], function(yourVehicle)
                 SetVehicleProperties(yourVehicle, vehicleProps)
@@ -145,9 +145,12 @@ SpawnVehicle = function(data, isRecovery)
     
     -- Trigger the event
     if isRecovery then
-        esx.TriggerServerCallback("skull_garage:pay", callback)
+        esx.TriggerServerCallback("skull_garage:pay", function(success, amount)
+            print('Payed for Recovery: ' .. tomoney(amount))
+            spawnVehicle(success, amount);
+        end, false)
     else
-        callback(true, 0)
+        spawnVehicle(true, 0)
     end
 end
 

@@ -22,6 +22,11 @@ AddEventHandler("esx:setJob", function(newJob)
     esx.PlayerData["job"] = newJob
 end)
 
+-- Close the menu when the user dies
+AddEventHandler('esx:onPlayerDeath', function(data)
+    CloseMenu();
+end)
+
 Citizen.CreateThread(function()
     local CanDraw = function(action)
         if action == "vehicle" then

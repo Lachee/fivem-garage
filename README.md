@@ -4,6 +4,8 @@ Customised version of a Garage Script for SkullFace's server.
 <video src="https://i.lu.je/2021/0YmegSETIa.mp4"></video>
 Watch an [Example MP4](https://i.lu.je/2021/0YmegSETIa.mp4) ( hosted on my CDN )
 
+![Image showing the new circle markers](https://i.lu.je/2021/FiveM_GTAProcess_a1Ufh3YSCc.jpg)
+
 # Installation
 
 From your resouces directory for the ESX server:

@@ -27,7 +27,7 @@ esx.RegisterServerCallback("erp_garage:fetchVehicles", function(source, callback
         
         local identifier = xPlayer.getIdentifier()
         local data = MySQL.Sync.fetchAll("SELECT * FROM owned_vehicles WHERE owner=@identifier", {['@identifier'] = identifier})
-        print(esx.DumpTable(data));
+        --print(esx.DumpTable(data));
         callback(data)
     else
         print('Player doesnt exists')

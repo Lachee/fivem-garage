@@ -190,16 +190,21 @@ function MenuVehicleList()
     for c, v in pairs(fetchedVehicles) do
         if v then
             local vehicle = v.vehiculo
-            Menu.addButton(
-                "" .. (vehicle.plate) .. "    " .. GetDisplayNameFromVehicleModel(vehicle.model), -- Button Name
-                --"OptionVehicle",                                                            -- Button Callback
-                "SpawnVehicle", -- That extra button sucks
-                {vehicle, nil}, -- Callback Options
-                "garage: " .. currentGarage .. "", -- Additional data
-                " Motor : " .. round(vehicle.engineHealth) / 10 .. "%",
-                " Fuel : " .. round(vehicle.fuelLevel) .. "%",
-                "SpawnLocalVehicle" -- Hover Callback
-        )
+            local garage = v.garage
+
+            --Only show the vehicle if it is in the current garage (or we allow cross access)
+            if garage == currentGarage or Config.AllowCrossGarageAccess then
+                Menu.addButton(
+                    "" .. (vehicle.plate) .. "    " .. GetDisplayNameFromVehicleModel(vehicle.model), -- Button Name
+                    --"OptionVehicle",                                                            -- Button Callback
+                    "SpawnVehicle", -- That extra button sucks
+                    {vehicle, nil}, -- Callback Options
+                    "garage: " .. currentGarage .. "", -- Additional data
+                    " Motor : " .. round(vehicle.engineHealth) / 10 .. "%",
+                    " Fuel : " .. round(vehicle.fuelLevel) .. "%",
+                    "SpawnLocalVehicle" -- Hover Callback
+                )
+            end
         end
     end
 end

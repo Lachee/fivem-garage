@@ -24,9 +24,7 @@ Watch an [Example MP4](https://i.lu.je/2021/0YmegSETIa.mp4) ( hosted on my CDN )
 ## Via Git ( recommended )
 From your resouces directory for the ESX server:
 ```
-cd "[esx]"
-rm -rF esx_garage
-git clone https://github.com/Lachee/fivem-garage.git esx_garage
+git clone https://github.com/Lachee/fivem-garage.git "[lachee]/lachee-garage"
 ```
 
 This will replace the previous garage with this one.

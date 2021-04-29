@@ -14,12 +14,6 @@ Watch an [Example MP4](https://i.lu.je/2021/0YmegSETIa.mp4) ( hosted on my CDN )
 
 ![Image showing the new circle markers](https://i.lu.je/2021/FiveM_GTAProcess_a1Ufh3YSCc.jpg)
 
-# Installation
-## Requirements
-- FiveM
-- ESX
-- ESX Extended v1
-- MySQL Async
 
 ## Via Git ( recommended )
 From your resouces directory for the ESX server:
@@ -27,7 +21,10 @@ From your resouces directory for the ESX server:
 git clone https://github.com/Lachee/fivem-garage.git "[lachee]/lachee-garage"
 ```
 
-This will replace the previous garage with this one.
+Then in you server cfg:
+- `ensure lachee-garage`
+
+**Dont forget to remove the previous `[esx]/esx_garage` script**
 
 **Dont forget to run the `.sql` in the `sql/` folder**
 

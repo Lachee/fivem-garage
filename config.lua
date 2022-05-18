@@ -1,6 +1,6 @@
 Config = {}
 
-Config.RangeCheck = 25.0
+Config.DrawDistance = 10.0                  -- Distance to draw the icon.
 Config.AllowRecovery = true                 -- Enables recovery from the garages. Disable this if you plan to use other recovery scripts
 Config.RecoveryCost = 3000                  -- The cost of a car recovery.
 Config.TowingCost = 750

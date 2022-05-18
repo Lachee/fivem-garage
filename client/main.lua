@@ -70,7 +70,7 @@ Citizen.CreateThread(function()
             for action, actionData in pairs(garageData["positions"]) do
                 local dstCheck = #(pedCoords - actionData["position"])
                 
-                if dstCheck <= 10.0 then
+                if dstCheck <= Config.DrawDistance then
                     sleepThread = 5
                     local draw = CanDraw(action)
                     
@@ -111,7 +111,7 @@ Citizen.CreateThread(function()
                             ["b"] = 0
                         })
                     end
-                elseif (dstCheck > 10.0 and dentro == garage) then
+                elseif (dstCheck > Config.DrawDistance and dentro == garage) then
                     dentro = nil
                 end
             end

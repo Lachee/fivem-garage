@@ -17,7 +17,7 @@
 
 -- Dumping structure for table essentialmode.owned_vehicles
 CREATE TABLE IF NOT EXISTS `owned_vehicles` (
-  `owner` varchar(22) COLLATE utf8mb4_bin NOT NULL,
+  `owner` varchar(255) COLLATE utf8mb4_bin NOT NULL,
   `plate` varchar(12) COLLATE utf8mb4_bin NOT NULL,
   `vehicle` longtext COLLATE utf8mb4_bin DEFAULT NULL,
   `type` varchar(20) COLLATE utf8mb4_bin NOT NULL DEFAULT 'car',
